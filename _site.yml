@@ -1,0 +1,18 @@
+name: "EDLD 653 Final Project"
+title: "EDLD 653 Final Project "
+description: |
+  fp_final_proj_acme
+output_dir: "docs"
+navbar:
+  right:
+    - text: "Building Blocks"
+      href: building-blocks-o-functional-programming.html
+    - text: "Data Visualization"
+      href: functional-programming-for-data-visualization.html
+    - text: "Data Simulation"
+      href: creating-general-data-simulation-tools.html
+    - text: "Twitter Analysis"
+      href: twitter-data-analysis-with-functional-programming.html
+    - text: "About"
+      href: about.html
+output: distill::distill_article

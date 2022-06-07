@@ -1,0 +1,173 @@
+---
+title: "Building Blocks of Functional Programming"
+description: |
+  Walk through of basic data structure explorations using map
+author:
+  - name: Cassie Malcolm
+    url: https://example.com/norajones
+date: 2022-06-04
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(pacman)
+
+pacman::p_load(purrr, tidyverse, repurrrsive, r2symbols, emoji, here, rio)
+```
+
+![](../Lego/legos.jpg)
+
+Hello, and welcome - I assume you are here because you want to learn more about 
+data science and in particular functional programming. This blog is designed to 
+help you proceed on your data science path by providing an introduction to the 
+basic building blocks of functional programming. We'll be working with a freely available data set on Legos&copy;, which you can find here https://www.kaggle.com/datasets/rtatman/lego-database?resource=download.
+
+Let's start by loading the following packages: purrr, tidyverse, and 
+repurrrsive. Take a moment to use ?package name to find out what each package 
+does.
+
+Next we need to set up a directory for the csv files that we will be using.
+
+```{r}
+BBdata_dir <- here("Lego")
+```
+
+I've already prepped two of the files for our use today by making sure there is an ID column that matches. We can see what the csv files are by listing them and using regexp to exclude any non-csv files.
+
+```{r}
+BBcsv <- fs::dir_ls(BBdata_dir, regexp = "\\.csv$")
+
+BBcsv
+```
+
+Next we'll use one of the base functions in R, lapply, to return  a list. The 
+lapply function is one of the least restrictive in terms of output within the 
+apply family of functions. Notice that our two csv files are being combined 
+into one vector based on the color_id column. The function reduce from the purrr
+package allows us to join the csv files on a key, which in this case is 
+"color_id".
+
+```{r}
+BBlist <- BBcsv %>% 
+  lapply(read_csv) %>%
+  reduce(full_join, by = "color_id")
+
+head(BBlist)
+```
+
+We can confirm that this is a list with the typeof function. Lists can be very 
+helpful as they are vectors (but NOT atomic 🤯 ones!) that allow each element 
+to be of a different type (i.e., integer, double, logical, character).
+
+```{r}
+typeof(BBlist)
+```
+
+If we want to know the structure of our list we can use the below function to
+see our list's elements.
+
+```{r}
+str(BBlist)
+```
+
+What if we want to look at a particular row and column [row, column] of our 
+list?
+
+```{r}
+BBlist[5, 2]
+```
+
+Let's check and see if we have any missing values in our list.
+
+```{r}
+any(is.na(BBlist))
+```
+
+Since there are NAs in our list we can determine their position with the 
+following code.
+
+```{r}
+which(is.na(BBlist))
+```
+
+Now let's determine an artificial mean for our data set. To do this we'll use 
+our first functional, which is the map_chr function of the purrr package. A 
+functional is basically a type of function whose input is also a function and 
+whose output is a vector. In this case the function is mean, which will return 
+the mean of each inventory_id. Using map_chr ensures that the output in the new 
+column is of type character. Note that members of the map family return a 
+dataframe.
+
+```{r}
+BBdf <- BBlist %>% 
+  mutate(average = map_chr(inventory_id, mean))
+
+head(BBdf)
+```
+
+How about determining the unique amount of each variable in our dataframe? We 
+can use another functional! Note that purrr uses less code by using the ~ symbol 
+to take the place of function(x), which is often used with lapply, with .x as 
+the placeholder for the thing being looped over. In this case each variable is 
+being looped over.
+
+```{r}
+map(BBdf, ~length(unique(.x)))
+```
+
+Most of the time we have to look at individual building blocks before we can 
+proceed to solving larger functional programming problems. Let's start by 
+determining the the number of unique times each color appears. The n column in 
+count_colors dataframe below shows on how many different parts a color appears.
+
+```{r}
+count_colors <- count(BBdf, name)
+
+head(count_colors)
+```
+
+Second, we can use the tally function to find the total number of parts when you consider color as a part variation. We can use this number later to test if the first function we are about to write is working correctly.
+
+```{r}
+count_colors %>%
+  tally(n)
+```
+
+Our first function, super exciting! Here is an overview of the parts of the 
+below function, which is built to return a percentage.
+
+*The function's name is `my_function`
+*Percentage is an object that is later printed with its second usage
+*An argument x is found in the formal component of `(x)`
+*The body of the function is found between the {}
+*The function format allows us to remove scientific notation with `= F`
+*The function round allows our output to be limited to two decimal places
+
+```{r}
+my_function <- function(x) {Percentage = (x/sum(x))*100; format(round(Percentage, 2), scientific = F)}
+
+my_function(count_colors$n)
+```
+
+If we want to check that our function is working correctly we can use a data 
+point (let's check the second data point for color Aqua) and manually determine 
+the corresponding percentage.
+
+```{r}
+(96/580255)*100
+```
+
+Our function worked! The above number when rounded is 0.02, which is the second 
+percentage.
+
+That wraps up our introduction to functional programming! In the next parts of 
+the blog you'll learn more about functions and how to perform more complex 
+functional programming.
+
+
+
