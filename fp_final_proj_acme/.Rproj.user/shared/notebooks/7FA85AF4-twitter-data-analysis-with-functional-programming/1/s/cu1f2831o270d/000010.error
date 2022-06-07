@@ -1,0 +1,1 @@
+{"frames":[],"message":"Error in write_csv(crt_tweets, \"~/Documents/r_projects/edld653-22/fp_collab/fp-tutorials/data/crt_tweets.csv\") : \n  could not find function \"write_csv\"\n"}

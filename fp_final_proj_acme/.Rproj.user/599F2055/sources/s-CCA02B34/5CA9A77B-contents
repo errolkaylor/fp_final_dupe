@@ -1,0 +1,21 @@
+---
+title: "Plan Breakdown"
+output: html_document
+---
+
+
+More than one variant of purrr::map is used [5 points]
+- Cassie (map_dfr)
+- Manuel (map)
+
+At least one {purrr} function outside the basic map family (walk_*, reduce, modify_*, etc.) [5 points]
+- Anwesha (safely)
+
+At least one instance of parallel iteration (e.g., map2_*, pmap_*) [5 points]
+- 
+
+At least one use case of purrr::nest %>% mutate() [5 points]
+- Anwesha/Errol
+
+At least two custom functions [20 points; 10 points each]
+- Manuel (x2)

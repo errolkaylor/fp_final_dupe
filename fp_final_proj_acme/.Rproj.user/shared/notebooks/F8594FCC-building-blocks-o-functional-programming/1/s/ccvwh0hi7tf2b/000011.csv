@@ -1,0 +1,31 @@
+"0","BBlist <- BBcsv %>% "
+"0","  lapply(read_csv) %>%"
+"0","  reduce(full_join, by = ""color_id"")"
+"1","[38;5;238mNew names:
+[36m*[38;5;238m [38;5;238m``[38;5;238m -> [38;5;238m`...1`[38;5;238m[39m
+"
+"1","[1mRows: [22m[34m135[39m [1mColumns: [22m[34m5[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m-----------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (2): name, rgb
+[32mdbl[39m (2): ...1, color_id
+[33mlgl[39m (1): is_trans
+"
+"1","
+[36mi[39m Use `spec()` to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"1","[1mRows: [22m[34m580251[39m [1mColumns: [22m[34m5[39m
+"
+"1","[36m--[39m [1mColumn specification[22m [36m-----------------------------------------[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): part_num
+[32mdbl[39m (3): inventory_id, color_id, quantity
+[33mlgl[39m (1): is_spare
+"
+"1","
+[36mi[39m Use `spec()` to retrieve the full column specification for this data.
+[36mi[39m Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","head(BBlist)"

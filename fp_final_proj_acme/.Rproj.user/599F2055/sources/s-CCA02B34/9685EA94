@@ -1,0 +1,26 @@
+{
+    "id": "9685EA94",
+    "path": "~/GitHub/fp-tutorials/fp_final_proj_acme/_posts/2022-06-04-functional-programming-for-data-visualization/functional-programming-for-data-visualization.Rmd",
+    "project_path": "_posts/2022-06-04-functional-programming-for-data-visualization/functional-programming-for-data-visualization.Rmd",
+    "type": "r_markdown",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1654577781252.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "194,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1654577542,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1654577542,
+    "read_only": false,
+    "read_only_alternatives": []
+}

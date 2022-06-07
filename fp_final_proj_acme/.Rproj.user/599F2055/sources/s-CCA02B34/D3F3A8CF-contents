@@ -1,0 +1,8 @@
+---
+title: "Functional Programming in R"
+description: |
+  Welcome to the website. I hope you enjoy it!
+site: distill::distill_website
+---
+
+This website houses blogs for different applications of functional programming in R.

@@ -1,0 +1,15 @@
+"0","#plot
+ggplot(pivot[-1,], aes(x = hour, y = sentiment)) + 
+  geom_line(group = 1) + 
+  geom_point() + 
+  theme_minimal() + 
+  labs(title = paste0('Average sentiment of tweetings mentioning ""',search_term,'""'),
+       subtitle = paste0(pivot$hour[2],' - ',pivot$hour[nrow(pivot)],' on ', format(sentiment$created_at[1], '%d %B %Y')),
+       x = 'Date', 
+       y = 'Sentiment', 
+       caption = 'Source: Twitter API')+
+  theme(axis.text.x = element_text(angle=45))
+"
+"2","Error in ggplot(pivot[-1, ], aes(x = hour, y = sentiment)) : 
+  could not find function ""ggplot""
+"

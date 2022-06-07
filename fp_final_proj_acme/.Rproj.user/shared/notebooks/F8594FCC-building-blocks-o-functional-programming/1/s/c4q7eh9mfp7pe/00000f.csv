@@ -1,0 +1,8 @@
+"0","BBcsv <- fs::dir_ls(BBdata_dir, regexp = ""\\.csv$"")"
+"0",""
+"0","BBcsv"
+"1","C:/Users/errol/Documents/GitHub/fp-tutorials/fp_final_proj_acme/Lego/colors2.csv
+"
+"1",""
+"1","C:/Users/errol/Documents/GitHub/fp-tutorials/fp_final_proj_acme/Lego/inventory_parts.csv
+"

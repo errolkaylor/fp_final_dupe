@@ -1,0 +1,6 @@
+"0","#get nearest hour of time for plot
+sentiment$hour <- format(round(sentiment$created_at, units=""hours""), format=""%H:%M"")
+"
+"2","Error in format(round(sentiment$created_at, units = ""hours""), format = ""%H:%M"") : 
+  object 'sentiment' not found
+"

@@ -1,0 +1,4 @@
+"0","BBdf <- BBlist %>% "
+"0","  mutate(average = map_chr(inventory_id, mean))"
+"0",""
+"0","head(BBdf)"

@@ -1,0 +1,94 @@
+---
+title: "Creating General Data Simulation Tools"
+description: |
+  Create your own functions to easily simulate datasets!
+author:
+  - name: Errol Kaylor
+    url: https://example.com/norajones
+date: 2022-06-04
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Outline
+
+Overall goal: demonstrate ways to generate datasets for classroom use!
+
+Part 1: Mocking data based on existing data set (of numerical/character data) 
+- Load in data, and produce descriptive stats.
+- Create a list of the columns/data types that are you are looking to mock up.
+- Populate the list with mocked data, depending on the types. 
+- Loop through the process, depending on # of data sets needed. 
+- Demonstrate function that walks them through the process
+-- Simulating different types of data!
+- Mocking numerical data
+-- Distribution functions, lists
+- Mocking character data
+-- Use of stringi for character strings
+-- Generate strings of specific length/format
+- Mocking logical data
+-- Mock survey data
+
+```{r}
+library(palmerpenguins)
+library(stats)
+library(psych)
+library(ggplot2)
+library(tidyverse)
+penguins
+
+
+#first function, tell us descriptives, and show us some boxplots?
+str(penguins)
+species_tables <- describeBy(penguins,group="species")
+
+species_tables
+penguins %>% 
+  na.omit() %>% 
+  ggplot(aes(x = bill_depth_mm, y = bill_length_mm))+
+  geom_point(aes(color = species))+
+  theme_minimal()
+  
+
+samp <- rchisq(600,df=3)
+
+qqplot(qchisq(ppoints(500),df=3),samp)
+
+gentoo <- penguins %>% 
+  filter(species == "Gentoo")
+
+
+# are my numerics normal? 
+nums <- rnorm(n=124,mean=47.50,sd=3.08)
+
+describe(nums)
+gentoo$bill_length_mm
+describe(gentoo)
+
+
+```
+Goal of this tutorial: creating a general purpose function for mocking up datasets! 
+
+Our first targeted dataset is palmers penguins, however we will then look at more complex composite datasets, and randomness.
+
+Step 1: analyze the existing dataset- for our purposes, we will be matching *insert data types that will be included here, and how we are matching. 
+
+
+Taking an intial look at the data, an intuitive sense may be that the numbers we're seeing have something some distinctions that might be important to capture - let's try an obvious one, and try our descriptive statistics grouped by species.
+
+As it turns out, there are some differences (maybe not significant but we'll find out) in our data! Again, let's look at our selected data and sample to create our distribution to create it from - Adelie penguins, for simplicity sake!
+
+At this point we can make 
+
+Mimicing using stats functions, create as wrappers essentially.
+
+
+
+#General workflow- overall goal is return a dataframe? Why not at this point
+Looping through df, understand intended distribution level to work with
+1. Data Type?

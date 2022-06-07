@@ -1,0 +1,195 @@
+---
+title: "Functional Programming for Data Visualization"
+description: |
+  Developing a function to visualize survey data
+author:
+  - name: Manuel Vazquez
+    url: https://example.com/norajones
+date: 2022-06-04
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(purrr)
+library(RColorBrewer)
+```
+
+## Introduction 
+
+This tutorial will walk through an applied example to show how to simulate survey data
+and create a function to graph survey data using divergent, stacked bar charts. Creating this function would allow the user to graph survey data to any of their liking!
+
+## Simulating data
+
+We begin by simulating some survey data. We will simulate responses to 5 questions that 
+use a likert item with a scale of one to four. To ease the simulation of the data, we 
+will create a function to generate this data. The function has 5 formals or arguments:
+
+1.    **max** - An integer that represents the maximum of the likert scale. Since the items we are developing are on a 4 point scale, then we will add 4. If we wanted to simulate items on a 7 point scale, then we would add a 7 to this argument. 
+2.    **n** - An integer that represents the total number observations that the user wishes to generate
+3.    **weights** - A list of weights that the user specifies to influence the frequency of certain responses. The length of the vector should be equal to the max.
+4.    **levels** - A numeric vector that lists the numeric number tied to each response. It should start with 1 and end with the max number specified.
+5.    **labels** - A character vector with the labels attached to the numeric values.
+  
+The function below also provides an error message in case certain formals are not specified correctly.
+
+```{r simulate}
+likert_sim <- function(max, n, weights, levels,labels) {
+  if ((length(levels) == length(labels)) & (length(weights) == max))  {
+  factor(sample(1:max, n, replace = TRUE, prob = weights),
+         levels = levels,
+         labels = labels)
+  } else {
+  stop("Are the length of your labels, levels, or weights equal to the likert item specified? ",  
+          " The scale is on a ", max, " point likert item scale. Did you add sufficient arguments?  ",
+         ", Number of weight arguments added was ",length(weights),
+         ", Number of labels arguments added was ", length(labels),
+         ", Number of level arguments added was, ", length(levels))
+  }
+}
+
+```
+
+Using this function, we simulate the data for five questions which we call q1... to q5. 
+The sample scale we will simulate will be a 4 point agreement scale ranging from strongly 
+disagree to strongly agree. Before running the function, we define the levels and the labels. Again, the lengths of each of these vectors should be similar.
+
+```{r }
+levels <- c(1,2,3,4)
+labels <- c("Strongly disagree", "Disagree", "Agree", "Strongly agree")
+
+```
+
+Below, we use the simulate function we just created to generate 5 simulated responses with varying weights in responses. To do this, we use the levels and labels vectors defined above and plug those in to the function we defined. We define a matrix with variying weights that we will use in the function. We will use the map command to loop through the function five times, and generate a list with five items.
+
+
+```{r }
+allWeights <- matrix(c(.20,.30,.25,.25,
+                     .10,.50,.15,.25,
+                     .25,.10,.50,.15,
+                     .30,.30,.10,.30,
+                     .39,.45,.15,.10),
+                   nrow=5,ncol=4,byrow=TRUE)
+
+ allQ <- map(1:5, ~likert_sim(4, 250, allWeights[.x,], levels, labels)) 
+
+```
+
+After we simulate this data, we bind it together into a data frame and generate a random
+respone ID. The data is now ready to be graphed!
+
+```{r }
+surveydf <- reduce(allQ, cbind) 
+colnames(surveydf) <- c("q1","q2","q3","q4","q5")
+
+surveydf <- surveydf %>%
+  as_tibble() %>%
+  mutate(id = ids::random_id(250, 4))
+
+```
+
+## Create a function to graph the data
+
+Now that we have the data simulated, we are ready to graph. In order to create a divergent
+horizontal bar chart, we need to take on two steps. First, we need to transform the data 
+so that it summarizes mean responses and it is in a format that allows for graphing in bar 
+format. This means that we need to summarize and pivot the data in a long format. After we 
+summarize and prep the data, we move on to second step which is to actually graph the data using *ggplot*. We will create a function that corresponds to each of these two steps, and then apply those two functions together to graph the information.
+
+To begin, we will create a function that collapses and pivots the data. The function has 4 arguments:
+
+1.    **df ** - specifies the data frame to be used,
+2.    **cols** - is a list of the name of the columns we wish to include,
+3.    **labels** - Labels of the responses
+4.    **levels** - Numeric values of the responses
+
+```{r }
+summ_likert <- function(df,mincol,maxcol,labels,levels) {
+  df %>%
+  pivot_longer(
+    cols = {{mincol}}:{{maxcol}},
+    names_to = "question",
+    values_to = "frequency") %>%
+  group_by(question,frequency) %>%
+    count(name = "n_answers") %>%
+  group_by(question) %>%
+  mutate(percent_answers = round((n_answers / sum(n_answers))*100, 0),
+         frequency = factor(frequency,
+                           levels = levels,
+                           labels = labels)) %>%
+  mutate(percent_answers = if_else(frequency == labels[1] | frequency == labels[2],
+                                   -1*percent_answers,percent_answers))
+}
+```
+
+Here, we use the *head* command to check how well the function works. Note that for 
+the last two arguments — labels and levels — I am using the vectors that were defined earlier in the data simulation step. You will notice that the percent_answers column has some negative answers. This was done on purpose so that responses that are more negative fall to the left of zero. This is needed in order to graph the likert items in a divergent bar chart.
+
+```{r }
+head(summ_likert(surveydf,q1,q5,labels,levels))
+```
+
+
+Next, we define a function to graph the data. The function will only have one 
+argument, **df**. This argument refers to the data frame
+
+
+```{r }
+graph_likert <- function(df) {
+  df %>%
+  ggplot(aes(x = question,
+             y = percent_answers,
+             fill = frequency)) + 
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = abs(percent_answers)),
+            position = position_stack(vjust = 0.5),
+            color = "white",
+            fontface = "bold") +
+  geom_hline(yintercept = 0) +
+  coord_flip() +
+  scale_fill_brewer(palette = "RdYlGn") +
+  theme_minimal() +
+  labs(fill = NULL) +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = "top")
+}
+
+```
+
+
+## Apply the function
+
+Finally, we can apply the function to graph the simulated data. We can do this by
+using the function that pivots the data (*summ_likert*) and pass through the function
+that graphs the data (*graph_likert*), and that is it! If you have multiple questions,
+you can reuse this function and reduce the code you write!
+
+```{r }
+summ_likert(surveydf,q1,q5,labels,levels) %>%
+  graph_likert()
+```
+
+You can also add some further customization to make the graph easier to read. For example,
+I can add a title and subtitle to the graph as well as meaningful x labels to the graph.
+
+```{r }
+summ_likert(surveydf,q1,q5,labels,levels) %>%
+  graph_likert() +
+  labs(x =" ",
+      title = "To what extent do you agree with the following?",
+       subtitle = "I consider myself good at") +
+  scale_x_discrete(labels=c("Teaching content to \n\ EL students", 
+                            "Assessing EL students", 
+                            "Leveraging EL student \n\ background in instruction", 
+                            "Supporting English \n\ proficiency development", 
+                            "Honoring EL students' \n\ background and culture")) +
+  theme(plot.title.position = "plot")
+
+
+```
+

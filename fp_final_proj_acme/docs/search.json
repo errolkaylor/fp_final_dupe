@@ -1,0 +1,26 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "Welcome to functional programming with R.",
+      "description": "Welcome to our new blog! Here, we explore different ways to work with functional programming techniques using R. We hope you enjoy reading what we have to say!\n",
+      "author": [
+        {
+          "name": "Anwesha Guha, Errol Kaylor, Cassie Malcolm, Manuel Vazquez",
+          "url": "https://example.com/norajones"
+        }
+      ],
+      "date": "06-04-2022",
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-06-06T21:52:23-07:00"
+    },
+    {
+      "path": "index.html",
+      "title": "fp_final_proj_acme",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2022-06-06T22:11:45-07:00"
+    }
+  ],
+  "collections": ["posts/posts.json"]
+}
